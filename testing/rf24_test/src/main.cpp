@@ -1,6 +1,4 @@
 #include <Arduino.h>
-
-
 /*
 * Getting Started example sketch for nRF24L01+ radios
 * This is a very basic example of how to send data from one node to another
@@ -15,7 +13,7 @@
 bool radioNumber = 0;
 
 /* Hardware configuration: Set up nRF24L01 radio on SPI bus plus pins 7 & 8 */
-RF24 radio(17,5);
+RF24 radio(7,8);
 /**********************************************************/
 
 byte addresses[][6] = {"1Node","2Node"};
@@ -29,7 +27,7 @@ void setup() {
   Serial.println(F("*** PRESS 'T' to begin transmitting to the other node"));
   
   radio.begin();
- 
+
   // Set the PA Level low to prevent power supply related issues since this is a
  // getting_started sketch, and the likelihood of close proximity of the devices. RF24_PA_MAX is default.
   radio.setPALevel(RF24_PA_LOW);
@@ -49,7 +47,7 @@ void setup() {
 
 void loop() {
   
- 
+  
 /****************** Ping Out Role ***************************/  
 if (role == 1)  {
     
@@ -62,7 +60,7 @@ if (role == 1)  {
      if (!radio.write( &start_time, sizeof(unsigned long) )){
        Serial.println(F("failed"));
      }
-
+        
     radio.startListening();                                    // Now, continue listening
     
     unsigned long started_waiting_at = micros();               // Set up a timeout period, get the current microseconds
@@ -96,6 +94,8 @@ if (role == 1)  {
     delay(1000);
   }
 
+
+
 /****************** Pong Back Role ***************************/
 
   if ( role == 0 )
@@ -103,11 +103,11 @@ if (role == 1)  {
     unsigned long got_time;
     
     if( radio.available()){
-                                                                 // Variable for the received timestamp
+                                                                    // Variable for the received timestamp
       while (radio.available()) {                                   // While there is data ready
         radio.read( &got_time, sizeof(unsigned long) );             // Get the payload
       }
-      
+     
       radio.stopListening();                                        // First, stop listening so we can talk   
       radio.write( &got_time, sizeof(unsigned long) );              // Send the final one back.      
       radio.startListening();                                       // Now, resume listening so we catch the next packets.     
@@ -115,6 +115,7 @@ if (role == 1)  {
       Serial.println(got_time);  
    }
  }
+
 
 
 
